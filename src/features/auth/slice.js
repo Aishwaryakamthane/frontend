@@ -1,21 +1,23 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { clearNotifications } from "../notification/notificationSlice";
 
-// Simple client-side mock users (for demo/test only)
 const MOCK_USERS = {
-  admin: { password: "1234", role: "Admin", name: " Admin" },
-  hr: { password: "1234", role: "HR", name: "HR" },
-  finance: { password: "1234", role: "Finance", name: " Finance" },
-  sales: { password: "1234", role: "Sales", name: " Sales" },
-  employee: { password: "1234", role: "Employee", name: " Employee" },
+  admin: { password: "1234", role: "Admin", name: "Alice Admin" },
+  hr: { password: "1234", role: "HR", name: "Hannah HR" },
+  finance: { password: "1234", role: "Finance", name: "Frank Finance" },
+  sales: { password: "1234", role: "Sales", name: "Sally Sales" },
+  employee: { password: "1234", role: "Employee", name: "Evan Employee" },
 };
 
-// Async thunk (mock). Replace body with API call to backend when ready.
+// Async login mock
 export const login = createAsyncThunk(
   "auth/login",
   async ({ username, password }, { rejectWithValue }) => {
-    await new Promise((r) => setTimeout(r, 300)); // fake latency
+    await new Promise((r) => setTimeout(r, 300));
     const user = MOCK_USERS[username];
-    if (!user || user.password !== password) return rejectWithValue("Invalid credentials");
+    if (!user || user.password !== password) {
+      return rejectWithValue("Invalid credentials");
+    }
     return { username, name: user.name, role: user.role };
   }
 );
@@ -28,7 +30,7 @@ const slice = createSlice({
     error: null,
   },
   reducers: {
-    logout(state) {
+    logout(state, action) {
       state.user = null;
       state.status = "idle";
       state.error = null;
@@ -36,7 +38,8 @@ const slice = createSlice({
     },
     setUser(state, action) {
       state.user = action.payload;
-      if (action.payload) localStorage.setItem("auth_user", JSON.stringify(action.payload));
+      if (action.payload)
+        localStorage.setItem("auth_user", JSON.stringify(action.payload));
       else localStorage.removeItem("auth_user");
     },
   },
@@ -58,4 +61,11 @@ const slice = createSlice({
 });
 
 export const { logout, setUser } = slice.actions;
+
+// Thunk to log out + clear notifications
+export const logoutAndClear = () => (dispatch) => {
+  dispatch(logout());
+  dispatch(clearNotifications());
+};
+
 export default slice.reducer;

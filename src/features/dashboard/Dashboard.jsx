@@ -1,6 +1,8 @@
 import React, { Suspense } from "react";
 import { useSelector } from "react-redux";
 import WidgetCard from "../../components/WidgetCard";
+import DocumentUpload from "../../components/DocumentUpload";
+
 const ChartWidget = React.lazy(() => import("./ChartWidget"));
 
 export default function Dashboard() {
@@ -32,20 +34,31 @@ export default function Dashboard() {
   const widgets = widgetsByRole[role] || widgetsByRole.Employee;
 
   return (
-    <div className="min-h-screen p-6 bg-gray-100 dark:bg-gray-900">
-      <h1 className="text-2xl font-bold mb-4">Dashboard — {role}</h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {widgets.map((w) =>
-          w.type === "chart" ? (
-            <div key={w.id}>
-              <Suspense fallback={<div className="p-4 bg-white rounded shadow">Loading chart...</div>}>
-                <ChartWidget title={w.title} />
-              </Suspense>
-            </div>
-          ) : (
-            <WidgetCard key={w.id} title={w.title} value={w.data} color="bg-indigo-600" />
-          )
-        )}
+    <div className="w-full">
+      <div className="max-w-7xl mx-auto">
+        <header className="mb-6">
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-gray-100">
+            Dashboard — <span className="text-indigo-600">{role}</span>
+          </h1>
+        </header>
+
+        <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {widgets.map((w) =>
+            w.type === "chart" ? (
+              <div key={w.id} className="min-h-[220px]">
+                <Suspense fallback={<div className="glass-card">Loading chart...</div>}>
+                  <ChartWidget title={w.title} />
+                </Suspense>
+              </div>
+            ) : (
+              <WidgetCard key={w.id} title={w.title} value={w.data} color="bg-indigo-600" />
+            )
+          )}
+        </section>
+
+        <section className="mt-8">
+          <DocumentUpload />
+        </section>
       </div>
     </div>
   );

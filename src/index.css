@@ -2,8 +2,27 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Optional global styles */
+/* Global fixes for consistent sizing and removing unwanted scrollbars */
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden; /* we control scroll inside app */
+}
+
+/* Make sure main content area handles scrolling */
+.app-main {
+  height: calc(100vh - 64px); /* header height fallback */
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* subtle default background */
 body {
-  @apply bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100;
-  transition: background-color 0.25s ease;
+  @apply bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100;
+}
+
+/* small utility: glass card */
+.glass-card {
+  @apply bg-white/70 dark:bg-gray-800/60 backdrop-blur-md rounded-2xl p-6 shadow-lg border border-white/30;
 }
